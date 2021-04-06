@@ -29,6 +29,21 @@ class Polyline:
     steps = 35
     width = 3
     color = pygame.Color(0)
+
+    def get_point(self, points, alpha, deg=None):
+        if deg is None:
+            deg = len(points) - 1
+        if deg == 0:
+            return points[0]
+        return points[deg] * alpha + self.get_point(points, alpha, deg - 1) * (1 - alpha)
+
+    def get_points(self, base_points, count):
+        alpha = 1 / count
+        res = []
+        for i in range(count):
+            res.append(self.get_point(base_points, i * alpha))
+        return res
+
     def __init__(self):
         self.points = []
         self.speeds = []
@@ -46,20 +61,6 @@ class Polyline:
         for p in self.points:
             pygame.draw.circle(gameDisplay, (255, 255, 255), (int(p.int_pair()[0]), int(p.int_pair()[1])), self.width)
 
-def get_point(points, alpha, deg=None):
-    if deg is None:
-        deg = len(points) - 1
-    if deg == 0:
-        return points[0]
-    return points[deg] * alpha + get_point(points, alpha, deg - 1) * (1 - alpha)
-
-def get_points(base_points, count):
-    alpha = 1 / count
-    res = []
-    for i in range(count):
-        res.append(get_point(base_points, i * alpha))
-    return res
-
 class Knot(Polyline):
     def get_knot(self):
         if len(self.points) < 3:
@@ -70,7 +71,7 @@ class Knot(Polyline):
             ptn.append((self.points[i] + self.points[i + 1]) * 0.5)
             ptn.append(self.points[i + 1])
             ptn.append((self.points[i + 1] + self.points[i + 2]) * 0.5)
-            res.extend(get_points(ptn, self.steps))
+            res.extend(self.get_points(ptn, self.steps))
         return res
 
     def set_points(self):

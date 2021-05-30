@@ -131,35 +131,26 @@ class HardLevel(AbstractLevel):
 
 def easy_level_constructor(loader, node):
     data = loader.construct_mapping(node)
-    print (data)
+    _map = EasyLevel.Map()
+    _obj = EasyLevel.Objects()
+    #_obj.config = {'enemy_count': data['enemy_count'], 'enemy': data['enemy']}
+    return ({'map': _map, 'obj': _obj})
 
 def medium_level_constructor(loader, node):
     data = loader.construct_mapping(node)
-    print (data)
+    _map = MediumLevel.Map()
+    _obj = MediumLevel.Objects()
+    _obj.config = {'enemy': data['enemy']}
+    return ({'map': _map, 'obj': _obj})
 
 def hard_level_constructor(loader, node):
     data = loader.construct_mapping(node)
-    for i in data:
-        print(i)
-    print (data)
+    _map = HardLevel.Map()
+    _obj = HardLevel.Objects()
+    _obj.config = {'enemy_count': data['enemy_count'], 'enemy': data['enemy']}
+    return ({'map': _map, 'obj': _obj})
 
-if __name__ == "__main__":
-    loader = yaml.Loader
-    loader.add_constructor("!easy_level", easy_level_constructor)
-    loader.add_constructor("!medium_level", medium_level_constructor)
-    loader.add_constructor("!hard_level", hard_level_constructor)
-    Levels = yaml.load(
-        '''
-        levels:
-            - !easy_level {}
-            - !medium_level
-                enemy: ['rat']
-            - !hard_level
-                enemy:
-                    - rat
-                    - snake
-                    - dragon
-                enemy_count: 10
-        ''')
-    print (Levels)
-    #data = yaml.load(Levels, Loader=yaml.FullLoader)
+
+yaml.Loader.add_constructor("!easy_level", easy_level_constructor)
+yaml.Loader.add_constructor("!medium_level", medium_level_constructor)
+yaml.Loader.add_constructor("!hard_level", hard_level_constructor)
